@@ -9,6 +9,8 @@
   <head>
     <!-- Tab Title -->
     <title>Friend Finder | Quiz</title>
+    <!-- Link in a tab icon, cuz why not -->
+    <link rel="icon" href="http://www.freeiconspng.com/uploads/burn-burning-fire-flame-heat-icon--icon-search-engine-20.png">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   </head>
@@ -231,30 +233,35 @@
 
     <!-- JavaScript for Submission Logic -->
     <script>
+
+      // Global Variable Declaration (scoping fix)
+      var allFieldsCompleted;
+
       $(document).ready(function() {
 
         // Event Listener for Submission
         $('#submitButton').on('click', function() {
           
           // Check if all the user fields are completed
-          var allFeildsCompleted;
+          checkIfComplete(function(){
 
-          // checkIfComplete(function(){
-          //   alert(allFeildsCompleted)
-          // })
+            // Proceed with AJAX call if all questions are answered
+            if(allFieldsCompleted){
+              collectInputs();
+            }
+            else{
+              alert('Please complete all fields before submitting!');
+            }
 
-          checkIfComplete();
+          }); // end checkIfComplete() callback
 
-        });
+        }); // end submit listener
 
+      }); // document ready
 
-      });
 
       // Function to valid user input
       function checkIfComplete(callback){
-
-        // Proper scoping of callback function ?
-        //var callbackFunction = this.callback;
 
         // Check through all the questions (i.e. iterate through all of class "chosen-select")
         var questionsCompleted;
@@ -269,38 +276,30 @@
 
           // Check if any questions are incomplete
           if(questionsCompleted == false){
-            allFeildsCompleted = false;
+            allFieldsCompleted = false;
           }
 
           // Determine if Name is entered
           else if( $('#formName').val().trim() == "" ){
-            allFeildsCompleted = false;
+            allFieldsCompleted = false;
           }
 
           // Determine if Link is entered
           else if( $('#formImage').val().trim() == "" ){
-            allFeildsCompleted = false;
+            allFieldsCompleted = false;
           }
 
           // Otherwise, the all fields are completed
           else{
-            allFeildsCompleted = true;
+            allFieldsCompleted = true;
           }
 
           // Fire Off Callback (to counter async behavior of $.each)
-          //callbackFunction();
-
-          // --------------- Run this for now... ---------------
-          if(allFeildsCompleted){
-            collectInputs();
-          }
-          else{
-            alert('Please complete all fields before submitting!');
-          }
-          
+          callback();       
 
         });
       }
+
 
       function collectInputs(){
 
@@ -333,7 +332,7 @@
             // Show the modal with the best match 
             $("#resultsModal").modal('toggle');
 
-          });
+          }); // end AJAX POST
 
         });
 
